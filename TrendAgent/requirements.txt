@@ -1,0 +1,9 @@
+flask
+bertopic[all]
+pandas
+scikit-learn
+umap-learn
+hdbscan
+gensim
+matplotlib
+
