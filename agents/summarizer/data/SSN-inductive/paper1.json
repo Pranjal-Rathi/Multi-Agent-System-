@@ -1,0 +1,13 @@
+{
+    "paper_id": "102498304",
+    "title": "Weak Galerkin finite element method for Poisson’s ...",
+    "abstract": "in this paper , the weak galerkin finite element method for second order eilliptc problems employing polygonal ...",
+    "text": [
+      ["The weak galerkin finite element method using triangulated meshes was proposed by ..."],
+      ["Let @inlineform1 be a partition of the domain Ω consisting of polygons in two dimensional"]
+    ],
+    "section_names": ["Introduction", "Shape Regularity"],
+    "domain": "Mathematic"
+  }
+  
+  
