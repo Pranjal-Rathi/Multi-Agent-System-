@@ -1,73 +1,118 @@
 import streamlit as st
 import pandas as pd
 import os
+import requests
 from bertopic import BERTopic
+from sentence_transformers import SentenceTransformer
+from wordcloud import WordCloud
 
+# Page setup
 st.set_page_config(page_title="Trends Agent", layout="wide")
+
+# Load embedding model once at startup
+@st.cache_resource
+def load_embedding_model():
+    return SentenceTransformer("fine_tuned_model3")
+EMBEDDING_MODEL = load_embedding_model()
+
+# Load raw data once
+@st.cache_data
+def load_and_preprocess_data():
+    from src.preprocess import load_data, combine_fields, preprocess_documents
+    data = load_data("data/summaries.json")
+    docs = combine_fields(data)
+    pre_docs = preprocess_documents(docs)
+    return docs, pre_docs
+DOCUMENTS, PREPROCESSED = load_and_preprocess_data()
+
+# Load or initialize topic model
+@st.cache_resource
+def load_or_init_topic_model():
+    try:
+        return BERTopic.load("fine_tuned_bertopic_model2")
+    except:
+        return None
+st.session_state.setdefault('topic_model', load_or_init_topic_model())
+
+# Helper to generate embeddings
+def generate_embeddings(texts):
+    return EMBEDDING_MODEL.encode(texts, show_progress_bar=False)
 
 # Sidebar
 st.sidebar.title("🧠 Trends Agent")
-mode = st.sidebar.radio("Choose Mode", ["Run BERTopic", "View Visualizations", "Ask Agent"])
+mode = st.sidebar.radio("Choose Mode", ["Run BERTopic", "View Visualizations", "Explore Documents", "Ask Agent"])
 
+# Ensure output directory
 output_dir = "output"
+os.makedirs(output_dir, exist_ok=True)
 
-# 1️⃣ Run BERTopic
+# 1️⃣ Run BERTopic on preloaded data
 if mode == "Run BERTopic":
-    st.title("📊 Run BERTopic on Your Data")
-    uploaded_file = st.file_uploader("Upload a CSV file with 'text' and 'timestamp' columns", type=["csv"])
+    st.title("📊 Run BERTopic on Preloaded Research Summaries")
+    if st.button("Run BERTopic and Save Model", key="run_bertopic"):
+        with st.spinner("Training BERTopic..."):
+            texts = PREPROCESSED
+            embeddings = generate_embeddings(texts)
+            topic_model = BERTopic(embedding_model=EMBEDDING_MODEL, verbose=True)
+            topics, probs = topic_model.fit_transform(texts, embeddings)
+            topic_model.save("fine_tuned_bertopic_model2")
+            st.session_state['topic_model'] = topic_model
+        st.success("Model trained and saved.")
 
-    if uploaded_file:
-        df = pd.read_csv(uploaded_file)
-
-        st.dataframe(df.head())
-
-        if st.button("Run BERTopic"):
-            with st.spinner("Running topic modeling..."):
-                topic_model = BERTopic(verbose=True)
-                topics, _ = topic_model.fit_transform(df["text"])
-                topic_model.visualize_topics().write_html(os.path.join(output_dir, "topic_viz.html"))
-                topic_model.visualize_barchart().write_html(os.path.join(output_dir, "bar_chart.html"))
-                topic_model.visualize_heatmap().write_html(os.path.join(output_dir, "heatmap.html"))
-                topic_model.visualize_hierarchy().write_html(os.path.join(output_dir, "hierarchy.html"))
-                if "timestamp" in df.columns:
-                    df["timestamp"] = pd.to_datetime(df["timestamp"])
-                    topic_model.visualize_topics_over_time(df["text"], topics, df["timestamp"]).write_html(
-                        os.path.join(output_dir, "topics_over_time.html"))
-
-            st.success("BERTopic completed and visualizations saved!")
-
-# 2️⃣ Visualizations
+# 2️⃣ View Visualizations
 elif mode == "View Visualizations":
     st.title("📈 Topic Visualizations")
-    visual_files = {
-        "Bar Chart": "bar_chart.html",
-        "Topic Map": "topic_viz.html",
-        "Heatmap": "heatmap.html",
-        "Hierarchy": "hierarchy.html",
-        "Topics Over Time": "topics_over_time.html"
-    }
-
-    selected_vis = st.selectbox("Choose a Visualization", list(visual_files.keys()))
-    vis_path = os.path.join(output_dir, visual_files[selected_vis])
-    if os.path.exists(vis_path):
-        with open(vis_path, 'r', encoding='utf-8') as f:
-            html_content = f.read()
-            st.components.v1.html(html_content, height=700, scrolling=True)
+    # List HTML and PNG files
+    html_files = [f for f in os.listdir(output_dir) if f.endswith('.html')]
+    png_files = [f for f in os.listdir(output_dir) if f.endswith('.png')]
+    all_files = html_files + png_files
+    if not all_files:
+        st.warning("No visualizations found. Run BERTopic first.")
     else:
-        st.warning("Visualization not found. Please run BERTopic first.")
+        sel = st.selectbox("Select visualization", all_files, key="vis_select")
+        path = os.path.join(output_dir, sel)
+        if sel.endswith('.html'):
+            with open(path, 'r', encoding='utf-8', errors='ignore') as f:
+                html = f.read()
+            st.components.v1.html(html, height=600)
+        elif sel.endswith('.png'):
+            st.image(path, caption=sel, use_column_width=True)
 
-# 3️⃣ Natural Language Prompt
+# 3️⃣ Explore Documents
+elif mode == "Explore Documents":
+    st.title("🗂 Document Explorer")
+    topic_model = st.session_state.get('topic_model')
+    if topic_model is None:
+        st.info("No saved model found. Run BERTopic first.")
+    else:
+        docs = DOCUMENTS
+        info = topic_model.get_document_info(PREPROCESSED)
+        info['label'] = info['Topic'].apply(lambda t: "Unclassified" if t == -1 else f"Topic {t}")
+        sel = st.multiselect("Filter by topic label", info['label'].unique(), key="doc_sel")
+        filtered = info[info['label'].isin(sel)] if sel else info
+        st.dataframe(filtered)
+        st.download_button("Download assignments CSV", filtered.to_csv(index=False), file_name="doc_topics.csv", key="download_docs")
+
+# 4️⃣ Ask Agent
 elif mode == "Ask Agent":
     st.title("💬 Ask Trends Agent")
-    user_query = st.text_input("Ask a question like: What are the top 3 trends in AI this month?")
+    query = st.text_input("Your question...", key="ask_input")
+    if st.button("Ask", key="ask_button") and query:
+        try:
+            resp = requests.get("http://localhost:5000/api/analyze", params={"q": query}).json()
+            st.json(resp)
+        except Exception as e:
+            st.error(f"Backend error: {e}")
 
-    if st.button("Ask") and user_query:
-        # Mock output for now (you can replace with a real backend call)
-        st.markdown("**Top 3 Topics:**")
-        st.markdown("1. Instruction-tuned LLMs")
-        st.markdown("2. Multimodal Agents")
-        st.markdown("3. Evaluation of Tool-Use")
-        st.markdown("📈 Topic 2 has seen a 250% increase since last month.")
-
-        st.info("This is a mocked response. You can connect this to a FastAPI backend using LangChain or simple keyword routing.")
-
+# Word clouds always visible at bottom of Run BERTopic
+if mode == "Run BERTopic" and st.session_state.get('topic_model'):
+    st.subheader("✨ Word Clouds for Top Topics")
+    tm = st.session_state['topic_model']
+    freq = tm.get_topic_freq()
+    top_ids = freq[freq.Topic != -1].Topic.head(4).tolist()
+    cols = st.columns(2)
+    for i, tid in enumerate(top_ids):
+        words = [w for w, _ in tm.get_topic(tid)[:20]]
+        wc = WordCloud(width=300, height=200).generate(" ".join(words))
+        with cols[i % 2]:
+            st.image(wc.to_array(), caption=f"Topic {tid}")
