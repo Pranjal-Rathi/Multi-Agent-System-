@@ -141,11 +141,10 @@ cython_debug/
 
 
 #dataset
-data/SSN-inductive
-data/papers
+data/
 
 #virtual env
 venv/
-/venv
+
 #doc
 *.docx
