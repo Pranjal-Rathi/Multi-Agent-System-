@@ -1,96 +1,123 @@
-import streamlit as st
-from agents.web_crawler import fetch_papers
-import pandas as pd
-
-st.set_page_config(page_title="Multi-Agent Research Assistant", layout="wide")
-
-st.title("Multi-Agent Research Assistant")
-
-st.markdown("""
-Welcome! This app uses multiple intelligent agents to:
-- Crawl research papers
-- Summarize them
-- Analyze trends
-- Give suggestions and interact with you
-""")
-
-query = st.text_input("🔍 Enter a research topic:")
-
-if query and st.button("Fetch Papers"):
-    st.info("Fetching papers from arXiv...")
-    papers = fetch_papers(query)
-    st.success(f"{len(papers)} papers fetched!")
-
-    # Save to CSV
-    df = pd.DataFrame(papers)
-    df.to_csv("papers.csv", index=False)
-
-    # Display
-    for i, paper in enumerate(papers):
-        with st.expander(f"📄 Paper {i+1}: {paper['Title']}"):
-            st.write(f"**Authors:** {paper['Authors']}")
-            st.write(f"**Published:** {paper['Published']}")
-            st.write(f"[🔗 PDF Link]({paper['PDF_URL']})")
-            if paper['PDF_Path']:
-                st.write(f"📁 Downloaded to: `{paper['PDF_Path']}`")
-
-
-
+# # app.py
 
 # import streamlit as st
+# import pandas as pd
+# import shutil
+# import os
+# from agents.webCrawlerAgent import web_crawler
 
+# # Function to clear the downloaded_papers folder
+# def clear_downloaded_papers(folder="downloaded_papers"):
+#     if os.path.exists(folder):
+#         shutil.rmtree(folder)
+#     os.makedirs(folder)
+
+# # Set up the Streamlit page
 # st.set_page_config(page_title="Multi-Agent Research Assistant", layout="wide")
 
-# st.title("Multi-Agent Research Assistant")
+# # Sidebar for selecting agent
+# st.sidebar.title("🤖 Multi-Agent System")
+# selected_agent = st.sidebar.radio("Choose an Agent", ["Web Crawler Agent", "Trends Agent"])
 
-# st.markdown("""
-# Welcome! This app uses multiple intelligent agents to:
-# - Crawl research papers
-# - Summarize them
-# - Analyze trends
-# - Give suggestions and interact with you
-# """)
+# # Agent 1: Web Crawler Agent
+# if selected_agent == "Web Crawler Agent":
+#     st.title("📄 Web Crawler Agent")
+#     query = st.text_input("Enter topic to search for papers")
+#     num_results = st.slider("Number of results", 1, 25, 10)
 
-# query = st.text_input("🔍 Enter a research topic:")
-# if query:
-#     st.write(f"You entered: **{query}**")
-#     st.info("Integrate your crawler/summarizer/trend agents here.")
+#     papers = []  # Initialize the papers list to store the fetched data
 
-
-
-
-# import streamlit as st
-# from agents.web_crawler import fetch_papers
-# from agents.summarizer import summarize_papers
-# from agents.trend_analyst import analyze_trends
-# from agents.chat_agent import chat_with_user
-
-# st.title("🧠 Multi-Agent Research Assistant")
-
-# # Step 1: Topic Input
-# query = st.text_input("Enter a research topic:")
-# if query:
 #     if st.button("Fetch Papers"):
-#         papers = fetch_papers(query)
-#         st.session_state['papers'] = papers
-#         st.success(f"{len(papers)} papers fetched.")
+#         if query.strip():  # Avoid blank queries
+#             clear_downloaded_papers()  # 🧹 Clear previous PDFs
 
-# # Step 2: Summarizer
-# if 'papers' in st.session_state:
-#     if st.button("Summarize Papers"):
-#         summaries = summarize_papers(st.session_state['papers'])
-#         for i, summary in enumerate(summaries):
-#             with st.expander(f"Paper {i+1} Summary"):
-#                 st.write(summary)
+#             with st.spinner("Fetching papers from arXiv..."):
+#                 papers = web_crawler.fetch_papers(query, num_results)
 
-# # Step 3: Trend Analysis
-#     if st.button("Analyze Trends"):
-#         trends = analyze_trends(st.session_state['papers'])
-#         st.pyplot(trends)  # Assuming it returns a matplotlib plot
+#             st.success("Fetched papers successfully!")
 
-# # Step 4: Chat Interface
-#     st.subheader("Chat with Research Advisor Bot")
-#     user_input = st.text_input("Ask something:")
-#     if user_input:
-#         response = chat_with_user(user_input, summaries)
-#         st.write(f"🧠 Advisor: {response}")
+#             if papers:
+#                 st.write("### Results")
+#                 # Manually construct a table-like structure with clickable links
+#                 table = "<table><thead><tr><th>Title</th><th>Authors</th><th>Published</th><th>PDF Link</th></tr></thead><tbody>"
+#                 for paper in papers:
+#                     title = paper["Title"]
+#                     authors = paper["Authors"]
+#                     published = paper["Published"]
+#                     pdf_url = paper["PDF_URL"]
+#                     table += f'<tr><td>{title}</td><td>{authors}</td><td>{published}</td><td><a href="{pdf_url}" target="_blank">PDF Link</a></td></tr>'
+#                 table += "</tbody></table>"
+
+#                 # Display the table as markdown (HTML formatted)
+#                 st.markdown(table, unsafe_allow_html=True)
+
+#                 st.download_button(
+#                     label="Download Metadata as CSV",
+#                     data=pd.DataFrame(papers).to_csv(index=False),
+#                     file_name="research_papers.csv",
+#                     mime="text/csv"
+#                 )
+
+#         else:
+#             st.warning("Please enter a valid topic to search.")
+
+# # Agent 2: Trends Agent
+# elif selected_agent == "Trends Agent":
+#     st.title("📊 Trends Agent")
+#     from agents.TrendAgent import trends_agent_app  # Safe to import now due to selection
+#     # All logic is inside trends_agent_app and gets executed on import
+
+
+# app.py
+
+import streamlit as st
+import pandas as pd
+import shutil
+import os
+from agents.webCrawlerAgent import web_crawler
+
+# Function to clear temporary folders
+def clear_temp_folders(download_folder="downloaded_papers", json_folder="json_outputs"):
+    for folder in [download_folder, json_folder]:
+        if os.path.exists(folder):
+            shutil.rmtree(folder)
+        os.makedirs(folder)
+
+
+# Sidebar agent selector
+st.sidebar.title("🤖 Multi-Agent System")
+selected_agent = st.sidebar.radio("Choose an Agent", ["Web Crawler Agent", "Trends Agent"])
+
+# Agent 1: Web Crawler Agent
+if selected_agent == "Web Crawler Agent":
+    st.title("📄 Web Crawler Agent")
+    query = st.text_input("Enter topic to search for papers")
+    num_results = st.slider("Number of results", 1, 25, 10)
+
+    papers = []
+
+    if st.button("Fetch Papers"):
+        if query.strip():
+            clear_temp_folders()
+            with st.spinner("Fetching papers from arXiv..."):
+                papers = web_crawler.fetch_papers(query, num_results)
+
+            st.success("Fetched papers successfully!")
+
+            if papers:
+                st.write("### Results")
+                table = "<table><thead><tr><th>Title</th><th>Authors</th><th>Published</th><th>PDF Link</th></tr></thead><tbody>"
+                for paper in papers:
+                    table += f"<tr><td>{paper['Title']}</td><td>{paper['Authors']}</td><td>{paper['Published']}</td><td><a href='{paper['PDF_URL']}' target='_blank'>PDF</a></td></tr>"
+                table += "</tbody></table>"
+                st.markdown(table, unsafe_allow_html=True)
+
+                st.download_button("Download CSV", pd.DataFrame(papers).to_csv(index=False), file_name="papers.csv")
+
+        else:
+            st.warning("Please enter a valid topic.")
+
+# Agent 2: Trends Agent
+elif selected_agent == "Trends Agent":
+    from agents.TrendAgent import trends_agent_app
+    trends_agent_app.run_trend_agent()  # Delegate UI rendering to agent
