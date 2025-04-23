@@ -6,4 +6,6 @@ umap-learn
 hdbscan
 gensim
 matplotlib
+wordcloud
+requests
 

@@ -8,6 +8,7 @@ venv/
 #ignore model folder
 fine_tuned_model3/
 bertopic_model
+fine_tuned_bertopic_model2
 
 
 # Distribution / packaging

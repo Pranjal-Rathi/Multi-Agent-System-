@@ -12,6 +12,11 @@ from src.topic_model import get_topic_summary  # Assuming this function is defin
 app = Flask(__name__)
 
 #############################################
+# Load embedding model once at startup
+#############################################
+EMBEDDING_MODEL = SentenceTransformer("fine_tuned_model3")
+
+#############################################
 # Helper Functions for Temporal Analysis
 #############################################
 
@@ -22,6 +27,7 @@ def parse_date(date_str):
     except Exception as e:
         print(f"Error parsing date '{date_str}': {e}")
         return None
+
 
 def load_data_with_dates(filepath):
     """
@@ -47,11 +53,10 @@ def load_data_with_dates(filepath):
         timestamps.append(dt)
     return documents, timestamps
 
+
 def generate_embeddings(documents):
-    """Generates document embeddings using SentenceTransformer."""
-    embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
-    embeddings = embedding_model.encode(documents, show_progress_bar=False)
-    return embeddings
+    """Generates document embeddings using the fine-tuned SentenceTransformer."""
+    return EMBEDDING_MODEL.encode(documents, show_progress_bar=False)
 
 #############################################
 # Preload Baseline Data for /topics and /documents Endpoints
@@ -62,6 +67,7 @@ DATA_PATH = "data/summaries.json"
 data = load_data(DATA_PATH)
 documents = combine_fields(data)
 preprocessed_docs = preprocess_documents(documents)
+
 # Build BERTopic model on baseline data
 baseline_topic_model = BERTopic(verbose=True)
 baseline_embeddings = generate_embeddings(preprocessed_docs)
@@ -80,8 +86,6 @@ def get_topics():
     (In this baseline version, we return precomputed topics.)
     """
     domain = request.args.get("domain")
-    # For a real implementation, you might re-run the pipeline with filtering.
-    # Here we simply return the precomputed topics summary.
     return jsonify(topics_summary)
 
 @app.route("/api/documents", methods=["GET"])
@@ -100,11 +104,9 @@ def topics_over_time_endpoint():
     Returns JSON data with temporal trends.
     """
     try:
-        # Load data with dates
         documents_with_dates, timestamps = load_data_with_dates(DATA_PATH)
         preprocessed = preprocess_documents(documents_with_dates)
 
-        # Optional: domain filtering via query parameter
         domain = request.args.get("domain")
         if domain:
             filtered = [(doc, ts) for doc, ts in zip(preprocessed, timestamps) if domain.lower() in doc.lower()]
@@ -112,31 +114,14 @@ def topics_over_time_endpoint():
                 return jsonify({"error": "No documents matched the domain filter."}), 404
             preprocessed, timestamps = zip(*filtered)
 
-        if not preprocessed:
-            return jsonify({"error": "No valid documents available."}), 404
-
-        # Generate new embeddings for the (possibly filtered) documents
         embeddings = generate_embeddings(preprocessed)
-
-        # Build a new BERTopic model on the fly
         temp_topic_model = BERTopic(verbose=True)
         topics, probs = temp_topic_model.fit_transform(preprocessed, embeddings)
-        
-        # Compute topics over time (returns a DataFrame)
         tot = temp_topic_model.topics_over_time(preprocessed, timestamps)
-        
-        # Convert the DataFrame to a list of dictionaries
         tot_dict = tot.to_dict(orient="records")
-        
-        # Return the topics-over-time data as JSON
         return jsonify(tot_dict)
-    
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-#############################################
-# New Endpoints for "Analyze" and "Visual"
-#############################################
 
 @app.route("/api/analyze", methods=["GET"])
 def analyze():
@@ -164,17 +149,11 @@ def serve_visual():
       /api/visual?file=topics_over_time.html
     """
     try:
-        # Get 'file' query parameter. Default could be 'topics_over_time.html'
         filename = request.args.get("file", "topics_over_time.html")
-        
-        # Build the path to the output directory
         file_path = os.path.join("output", filename)
-        
         if not os.path.exists(file_path):
             return jsonify({"error": f"File '{filename}' not found in output directory."}), 404
-        
         return send_from_directory("output", filename)
-    
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -183,6 +162,5 @@ def serve_visual():
 #############################################
 
 if __name__ == "__main__":
-    # Ensure output directory exists (if using visualizations later)
     os.makedirs("output", exist_ok=True)
     app.run(debug=True, port=5000)
