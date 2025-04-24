@@ -64,6 +64,7 @@ def generate_embeddings(documents):
 
 # Load and preprocess data once at startup
 DATA_PATH = "data/summaries.json"
+# DATA_PATH = "../summarizer/summaries.json"
 data = load_data(DATA_PATH)
 documents = combine_fields(data)
 preprocessed_docs = preprocess_documents(documents)
