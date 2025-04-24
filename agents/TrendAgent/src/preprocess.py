@@ -33,6 +33,7 @@ def preprocess_documents(documents):
 if __name__ == "__main__":
     # For quick testing; adjust the file path if needed.
     data = load_data("../data/summaries.json")
+    # data = load_data("../../summarizer/summaries.json")
     documents = combine_fields(data)
     preprocessed_docs = preprocess_documents(documents)
     print("First preprocessed document:\n", preprocessed_docs[0])

@@ -1,42 +1,52 @@
 [
   {
-    "Title": "Is there any measurable benefit in publishing preprints in the arXiv section Quantitative Biology?",
-    "Summary": "arXiv is a well-established e-print server founded by a theoretical physicist. it receives up to 8,000 new papers each month. this leads to the question, whether there is any quantifiable advantage to publish preprints on arXiv before submitting them to journals."
+    "Title": "Machine Learning Symmetry",
+    "date": "2022-01-23",
+    "Summary": "machine learning and neu-ral networks have been used with great accuracy to predict various properties of compactifi- cation manifolds such as topological numbers [7, 8, 9, 10], bundle cohomology [3, 11, 12], metrics [13, 14], and symmetry properties [15]. the works are in a sense part of a more general program of applying methods from data science and machine learning to study problems in math- ematical physics."
   },
   {
-    "Title": "Insights Into Quantitative Biology: analysis of cellular adaptation",
-    "Summary": "quantitative analysis of enzyme kinetics has been developed by se-Hui Jung [7] using fluorescence- conjugated peptide arrays. this assay was successfully applied for calculating the substrate concentration at which the enzyme works at the half of its maximum velocity. this could be due to the very low KM of GAPDH with respect to the TPI one."
+    "Title": "Machine Learning Potential Repository",
+    "date": "2020-07-27",
+    "Summary": "the repository uses a finite basis set of Gaussian-type radial functions. a pairwise structural feature is expressed as d(i) n0 = X jneighbor fn(rij), (3) where rij denotes the distance between atoms i and j. the repository uses polynomial functions as function F representing the relationship between the atomic energy and a given set of structural features."
   },
   {
-    "Title": "Routinely quantifying single cell proteomes: A new age in quantitative biology and medicine",
-    "Summary": "mass-spectrometry is poised to tran- scend these limitations by developing powerful methods to routinely quantify thousands of proteins and proteoforms across many thousands of single cells. the advances will transform medicine and ultimately contribute to understanding biological systems on an entirely new level. single-cell proteomics opens exciting frontiers Single cell proteomics will allow us to perform causal protein inference and createunbiased mod- els of direct and indirect protein interactions."
+    "Title": "Diversity in Machine Learning",
+    "date": "2018-07-04",
+    "Summary": "diversity in machine learning plays an important role in machine learning. diversity in machine learning works mainly on decreasing redundancy between the data or the model. diversity in active learning can also make the labelled training data contain the most information."
   },
   {
-    "Title": "The Linear-Noise Approximation and moment-closure approximations for stochastic chemical kinetics",
-    "Summary": "this is a short review of two common approximations in stochastic chemical and biochemical kinetics. it will appear as Chapter 6 in the book “Quantitative Biology: Theory, Computational Methods and Examples of Models” edited by Brian Munsky, Lev Tsimring and Bill Hlavacek."
+    "Title": "Machine Learning Risk Models",
+    "date": "2019-03-15",
+    "Summary": "the sample covariance matrix is singular (assuming T N), but it is semi-positive definite. the matrix (1) can have nearly degenerate or small eigenvalues. this requires further tweaking ij to avert undesirable effects on optimization."
   },
   {
-    "Title": "Quantitative Measure of Stability in Gene Regulatory Networks",
-    "Summary": "quantitative measure of stability in stochastic dynamics starts to emerge in recent experiments on bioswitches. this quantity, similar to the potential function in mathematics, is deeply rooted in biology. recent progresses in quantitative biology begin to meet those outstanding challenges. a potential landscape concept is not only metaphoric, also quantitative. it has been generally believed that this concept could not be quantified. it may also be reflected in the debate in mathematics around the catastrophe theory. Ao (2004) Robustness, stability and efficiency of phage lambda genetic switch: dynamical structure analysis. J. Bioinform. Comput. Bio. 2: 785-817. 7. S. Wright (1932) The roles of mutation, inbreeding, crossbreeding and selection in evolution."
+    "Title": "Scientific Machine Learning Benchmarks",
+    "date": "2021-10-25",
+    "Summary": "a recent spectacular success is DeepMind’s use of Deep Learning in their Alpha Fold-1 and Alpha Fold-24 solutions. a simple example of this technique is clustering, where the aim is to identify several groups of data points that have common features. a scientific ML benchmark is underpinned by a scientific problem."
   },
   {
-    "Title": "Introduction to the Special Issue on Approaches to Control Biological and Biologically Inspired Networks",
-    "Summary": "this special issue brings together a selection of papers on complementary approaches to observe, identify, and control biological and biologically inspired networks. the approach aims at identifying the minimum number of state variables that need to be measured to monitor the evolution of the entire network."
+    "Title": "Solving Machine Learning Problems",
+    "date": "2021-07-02",
+    "Summary": "our system gener- ates new questions across topics, answers multiple-choice questions, classifies problems, and generates problem hints. a math word problem is defined as a collection of sentences that form a question for which there is a correct numerical answer."
   },
   {
-    "Title": "The impact of the COVID-19 pandemic on academic productivity",
-    "Summary": "168,630 were posted in 2020, a +12.6% change from 2019. a quarter of the excess pre-prints posted to quantitative biology during 2020 were related to the pandemic and all authors had never appeared in the quantitative biology literature."
+    "Title": "Open-environment Machine Learning",
+    "date": "2022-06-01",
+    "Summary": "open-environment machine learning (Open ML) introduces some advances in this line of research. current success of machine learning are mostly on tasks assuming close- environment scenarios. a frequent re-training based on storing all received data may lead to huge computational and storage costs."
   },
   {
-    "Title": "How input fluctuations reshape the dynamics of a biological switching system",
-    "Summary": "in our model, the on transition rate of the switch is directly regulated by a noisy input signal. this continuous process can be a good approximation of the discrete birth-death process and is much more analytically tractable. the input fluctuations can effectively reduce the on rate of the switch."
+    "Title": "Creativity in Machine Learning",
+    "date": "2016-01-12",
+    "Summary": "a computer program is said to learn from experi-ence E with respect to some class of tasks T and performance measure P. xi are the input signals and wi are weights which have to get learned. a neural network was trained to recognize various images like bananas. this technique turns the network upside down and starts with random noise."
   },
   {
-    "Title": "Exploring Coverage and Distribution of Identifiers on the Scholarly Web",
-    "Summary": "the results show that when retrieving arXiv articles from mendeley, we were able to find more papers using the DOI than the arXiv ID. 91.4% of the 7,100 articles with a Digital Object Iden- tifier could be found on mendeley using the arXiv ID."
+    "Title": "Quantum Machine Learning",
+    "date": "2016-11-28",
+    "Summary": "quantum computers produce counter-intuitive patterns be- lieved not to be efficiently produced by classical systems. the nineteenth and early twentieth century gave rise to a broad range of mathematical methods for analyzing data to learn the patterns that it contained. the construction of digital computers in the mid 20th century allowed the automation of data analysis techniques."
   },
   {
-    "Title": "TIB-arXiv: An Alternative Search Portal for the arXiv Pre-print Server",
-    "Summary": "arXiv is a popular pre-print server focusing on natural sci- ence disciplines (e.g. physics, computer science, quantitative biology) it does not provide enhanced search functionality – but offers programming interfaces which allow external parties to add these services. the number of articles in the repository has increased linearly over the last 25 years, with more than 10,000 articles per month in 2017 [1]. the platform’s objective is to provide a good and easy-to-use publishing service, whereas it does particularly focus on user interface and search. however, functionalities for enhanced search and sorting are missing. web-based tool TIB-arXiv bundles existing features of arXiv and Arxiv Sanity Preserver. it enables access to all arXiv papers, offers efficient search and individualised ranking functionalities and provides easy-to-use user interface. TIB-arXiv’s user interface aims for clarity and responsiveness. it adapts to different display sizes, see Figure 1. research articles are presented by their title, author list, research domains and thumbnails of their page content. physicists and physicists as creators of arxiv-based commenting resources for their research communities. an initial survey. Information Services & Use 37(4), 371–387 (2017)."
+    "Title": "Machine Learning Portfolio Allocation",
+    "date": "2020-03-02",
+    "Summary": "a paper by Kirby and Ostdiek (2012) develop volatility- and reward-risk-timing strategies for the portfolio with many assets. the strategy employs machine learning, however, achieves the best results."
   }
 ]

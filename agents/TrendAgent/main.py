@@ -16,6 +16,7 @@ def filter_by_domain(documents, domain_keyword=None):
 def main():
     # Load and preprocess data
     data = load_data("data/summaries.json")
+    # data = load_data("../summarizer/summaries.json")
     documents = combine_fields(data)
     preprocessed_docs = preprocess_documents(documents)
     

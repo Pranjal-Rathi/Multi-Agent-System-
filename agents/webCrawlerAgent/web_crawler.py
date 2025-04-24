@@ -148,8 +148,9 @@ def fetch_papers(user_input, max_results=10):
         results_list.append(paper_data)
 
     # Save all paper metadata in a single JSON file
-    final_json_path = f"json_outputs/{user_input.replace(' ', '_')[:50]}_papers.json"
+    final_json_path = f"json_outputs/extracted_papers.json"
     with open(final_json_path, 'w', encoding='utf-8') as jf:
         json.dump(results_list, jf, ensure_ascii=False, indent=2)
-
+    print("WebCrawler")
     return results_list
+fetch_papers("Machine Learning",max_results=10)

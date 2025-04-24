@@ -31,7 +31,7 @@ def main():
             max_summary_length=150,
             num_beams=4
         )
-        results.append({"Title": p["Title"], "Summary": summary})
+        results.append({"Title": p["Title"],"date":p["date"] ,"Summary": summary})
         print("summarized:",p["Title"])
 
     # 3. Save results
